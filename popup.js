@@ -20,7 +20,7 @@ function copyCurrentUrl(stripQuery) {
       url = url.split('?')[0];
     }
 
-    const title = tabs[0].title;
+    const title = cleanTitle(tabs[0].title);
 
     setClipboard(`[${title}](${url})`);
   })
@@ -39,4 +39,8 @@ function setClipboard(text) {
         console.log(err);
       }
   );
+}
+
+function cleanTitle(title) {
+  return title.replace(' - Chromium Code Search', '');
 }
