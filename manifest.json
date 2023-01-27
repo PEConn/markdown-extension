@@ -1,0 +1,14 @@
+{
+  "name": "Copy URL as Markdown",
+  "description": "Copies the current page link and title, formatted as a Markdown URL.",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_icon": "markdown-icon.png",
+    "default_popup": "hello.html"
+  },
+  "permissions": [
+    "activeTab",
+    "clipboardWrite"
+  ]
+}
