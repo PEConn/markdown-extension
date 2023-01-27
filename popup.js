@@ -1,19 +1,30 @@
 console.log("This is a popup!");
 
-// setClipboard(Date.now())
-
 document.getElementById("copy").addEventListener("click", () => {
+  copyCurrentUrl(false);
+});
+
+document.getElementById("copy_clean").addEventListener("click", () => {
+  copyCurrentUrl(true);
+});
+
+function copyCurrentUrl(stripQuery) {
   const query = { active: true, currentWindow: true };
 
   chrome.tabs.query(query, (tabs) => {
     console.log(tabs);
 
-    const url = tabs[0].url;
+    let url = tabs[0].url;
+
+    if (stripQuery) {
+      url = url.split('?')[0];
+    }
+
     const title = tabs[0].title;
 
     setClipboard(`[${title}](${url})`);
   })
-});
+}
 
 function setClipboard(text) {
   const type = "text/plain";
