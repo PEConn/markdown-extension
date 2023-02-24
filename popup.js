@@ -12,7 +12,7 @@ class TitleOption extends HTMLElement {
     //   <span>{display}</span>
     // </label>
 
-    const id = this.getAttribute("id");
+    const id = this.getAttribute("option-id");
     const display = this.getAttribute("option");
 
     const input = document.createElement("input");
@@ -35,19 +35,46 @@ class TitleOption extends HTMLElement {
 
 customElements.define("title-option", TitleOption);
 
-function addTitleOption(title) {
-  const id = "" + Math.random();
-
+function addTitleOption(id, title) {
   const option = document.createElement("title-option");
-  option.setAttribute("id", id);
+  option.setAttribute("option-id", id);
   option.setAttribute("option", title);
   
   document.getElementById("titles").appendChild(option);
 }
 
-// addTitleOption("Title 3");
+function addTitleOptions() {
+  const query = { active: true, currentWindow: true };
+
+  chrome.tabs.query(query, (tabs) => {
+    const title = tabs[0].title;
+
+    getTitles(title).forEach((title, idx) => addTitleOption("suggestion-" + idx, title))
+
+    const clean = cleanTitle(title);
+
+    if (title !== clean) {
+      addTitleOption("suggestion-clean", clean);
+    }
+
+    document.getElementById("suggestion-0").checked = true;
+
+  })
+}
+
+function getSelectedTitleOption() {
+  // This funky thing turns a HTMLCollection into an array.
+  // https://stackoverflow.com/a/222847
+  const inputs = [].slice.call(document.getElementsByTagName("input"))
+      .filter(input => input.id.startsWith("suggestion"));
+
+  const selected = inputs.filter(input => input.checked);
+
+  return selected[0].value;
+}
 
 console.log("This is a popup!");
+addTitleOptions();
 
 document.getElementById("copy").addEventListener("click", () => {
   copyCurrentUrl(false);
@@ -69,7 +96,7 @@ function copyCurrentUrl(stripQuery) {
       url = url.split('?')[0];
     }
 
-    const title = cleanTitle(tabs[0].title);
+    var title = getSelectedTitleOption();
 
     setClipboard(`[${title}](${url})`);
   })
@@ -92,16 +119,28 @@ function setClipboard(text) {
 
 function cleanTitle(title) {
   return title
-    .replace(' - peconn@google.com - Google.com Mail', ' (email)')
-    .replace(' - Google Docs', ' (doc)')
+    .replace('- peconn@google.com - Google.com Mail', String.fromCodePoint(0x1F4E7))
+    .replace('- Google Docs', String.fromCodePoint(0x1F4D8))
     .replace(' - Chromium Code Search', '');
+}
+
+function indexOfSeparator(word, start) {
+  const pipe = word.indexOf("|", start);
+  const dash = word.indexOf("-", start)
+
+  if (pipe === -1) return dash;
+  if (dash === -1) return pipe;
+
+  return Math.min(pipe, dash);
 }
 
 function getSeparatorLocations(word) {
   let arr = [];
   let start = 0;
-  while (word.indexOf("|", start) !== -1) {
-    const i = word.indexOf("|", start);
+  // while (word.indexOf("|", start) !== -1) {
+  //   const i = word.indexOf("|", start);
+  while (indexOfSeparator(word, start) !== -1) {
+    const i = indexOfSeparator(word, start);
     arr.push(i);
     start = i + 1;
   }
