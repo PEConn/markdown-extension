@@ -45,7 +45,7 @@ function addTitleOption(title) {
   document.getElementById("titles").appendChild(option);
 }
 
-addTitleOption("Title 3");
+// addTitleOption("Title 3");
 
 console.log("This is a popup!");
 
@@ -91,7 +91,10 @@ function setClipboard(text) {
 }
 
 function cleanTitle(title) {
-  return title.replace(' - Chromium Code Search', '');
+  return title
+    .replace(' - peconn@google.com - Google.com Mail', ' (email)')
+    .replace(' - Google Docs', ' (doc)')
+    .replace(' - Chromium Code Search', '');
 }
 
 function getSeparatorLocations(word) {
