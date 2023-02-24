@@ -2,7 +2,7 @@
   <head>
 <style>
 body {
-  width: 120px;
+  width: 400px;
   text-align: center;
 }
 
@@ -13,10 +13,26 @@ h1 {
 button {
   margin: 4px;
 }
+
+.block {
+  display: block;
+}
 </style>
   </head>
   <body>
     <h1>Url Copier</h1>
+
+    <div id="titles">
+      <input type="radio" name="titles" id="title1" value="title 1" />
+      <label for="title1">Title 1</label>
+      <br />
+      <label>
+      <input type="radio" name="titles" id="title2" value="title 1" />
+      Title 2
+      </label>
+
+      <title-option id="title3" option="Short title" />
+    </div>
 
     <button id="copy">Copy</button>
     <button id="copy_clean">Copy Clean</button>
