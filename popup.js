@@ -119,6 +119,7 @@ function setClipboard(text) {
 
 function cleanTitle(title) {
   return title
+    .replace('Google.com Mail - ', '')
     .replace('- peconn@google.com - Google.com Mail', String.fromCodePoint(0x1F4E7))
     .replace('- Google Docs', String.fromCodePoint(0x1F4D8))
     .replace(' - Chromium Code Search', '');
