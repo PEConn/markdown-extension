@@ -77,14 +77,22 @@ console.log("This is a popup!");
 addTitleOptions();
 
 document.getElementById("copy").addEventListener("click", () => {
-  copyCurrentUrl(false);
+  copyCurrentUrl(false, false);
 });
 
 document.getElementById("copy_clean").addEventListener("click", () => {
-  copyCurrentUrl(true);
+  copyCurrentUrl(true, false);
 });
 
-function copyCurrentUrl(stripQuery) {
+document.getElementById("copy_with_date").addEventListener("click", () => {
+  copyCurrentUrl(false, true);
+});
+
+document.getElementById("copy_clean_with_date").addEventListener("click", () => {
+  copyCurrentUrl(true, true);
+});
+
+function copyCurrentUrl(stripQuery, addDate) {
   const query = { active: true, currentWindow: true };
 
   chrome.tabs.query(query, (tabs) => {
@@ -98,7 +106,17 @@ function copyCurrentUrl(stripQuery) {
 
     var title = getSelectedTitleOption();
 
-    setClipboard(`[${title}](${url})`);
+    var date = ""
+    if (addDate) {
+      // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+      date = " (" + new Intl.DateTimeFormat('en-GB', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }).format(new Date()) + ")";
+    }
+
+    setClipboard(`[${title}](${url})${date}`);
   })
 }
 
@@ -121,6 +139,7 @@ function cleanTitle(title) {
   return title
     .replace('Google.com Mail - ', '')
     .replace('- peconn@google.com - Google.com Mail', String.fromCodePoint(0x1F4E7))
+    .replace('Google.com Mail - ', '')
     .replace('- Google Docs', String.fromCodePoint(0x1F4D8))
     .replace(' - Chromium Code Search', '');
 }
