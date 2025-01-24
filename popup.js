@@ -51,13 +51,15 @@ function addTitleOptions() {
 
     getTitles(title).forEach((title, idx) => addTitleOption("suggestion-" + idx, title))
 
+
     const clean = cleanTitle(title);
 
     if (title !== clean) {
       addTitleOption("suggestion-clean", clean);
+      document.getElementById("suggestion-clean").checked = true;
+    } else {
+      document.getElementById("suggestion-0").checked = true;
     }
-
-    document.getElementById("suggestion-0").checked = true;
 
   })
 }
@@ -73,7 +75,6 @@ function getSelectedTitleOption() {
   return selected[0].value;
 }
 
-console.log("This is a popup!");
 addTitleOptions();
 
 document.getElementById("copy").addEventListener("click", () => {
@@ -104,7 +105,9 @@ function copyCurrentUrl(stripQuery, addDate) {
       url = url.split('?')[0];
     }
 
-    var title = getSelectedTitleOption();
+    var title = getSelectedTitleOption()
+      .replace('[', '\\[')
+      .replace(']', '\\]');
 
     var date = ""
     if (addDate) {
@@ -138,15 +141,15 @@ function setClipboard(text) {
 function cleanTitle(title) {
   return title
     .replace('Google.com Mail - ', '')
-    .replace('- peconn@google.com - Google.com Mail', String.fromCodePoint(0x1F4E7))
+    .replace('- peconn@google.com - Google.com Mail', '')
     .replace('Google.com Mail - ', '')
-    .replace('- Google Docs', String.fromCodePoint(0x1F4D8))
+    .replace('- Google Docs', '')
     .replace(' - Chromium Code Search', '');
 }
 
 function indexOfSeparator(word, start) {
-  const pipe = word.indexOf("|", start);
-  const dash = word.indexOf("-", start)
+  const pipe = word.indexOf(" | ", start);
+  const dash = word.indexOf(" - ", start)
 
   if (pipe === -1) return dash;
   if (dash === -1) return pipe;
